@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="stylesheet" href="./main.css">
+    <link rel="stylesheet" href="./w3-presets.css">
+    <meta charset="UTF-8">
+    <title>Is It A Fork?</title>
+</head>
+<body>
+<header class = "w3-xxlarge header w3-black w3-card-2 w3-margin-bottom">
+    <a href="/" class="w3-button">Home</a>
+    <a href="/faq" class="w3-button">FAQ</a>
+</header>
+<div class="centeredContent">
+    <div class="content">
+        <div class="w3-container w3-xxxlarge w3-center">Yes, it's a fork</div>
+        <div class="w3-card-4 w3-center w3-margin-top w3-padding-16">
+            <div class="w3-large w3-container">If you want win</div>
+            <input id="desireWin" class="w3-input" type="number" onchange="fieldChanged()" min="1" max="100000" value="100">
+            <div class="w3-container w3-large">you should bet</div>
+            <div id="firstTeamInfo" class="w3-container w3-large" th:text="'0 ' + '(' + ${fork.firstOdd} + ')' + ' on ' + ${fork.firstTeamName} + ' in ' + ${fork.firstSiteName}"></div>
+            <div class="w3-container w3-large">and</div>
+            <div id="secondTeamInfo" class="w3-container w3-large" th:text="'0 ' + '(' + ${fork.secondOdd} + ')' + ' on ' + ${fork.secondTeamName} + ' in ' + ${fork.secondSiteName}"></div>
+        </div>
+    </div>
+</div>
+<footer class="footer w3-container w3-border-black w3-center w3-margin-top">
+    <p class="w3-text">Created by Sviridov Yaroslav @Spolutrean</p>
+</footer>
+<script>
+    function fieldChanged() {
+        var desiredWin = parseFloat(document.getElementById("desireWin").value);
+
+        if(isNaN(desiredWin) || desiredWin < 1) {
+            document.getElementById("desireWin").value = 1;
+            return;
+        }
+        if(desiredWin > 100000) {
+            document.getElementById("desireWin").value = 100000;
+            return;
+        }
+
+        //if(desiredWin)
+
+        var site1 = document.getElementById("firstTeamInfo");
+        var site2 = document.getElementById("secondTeamInfo");
+
+        var coefficient1 = parseFloat(site1.innerText.split("(")[1].split(")")[0]);
+        var coefficient2 = parseFloat(site2.innerText.split("(")[1].split(")")[0]);
+
+        var betOnTeam1 = (desiredWin * coefficient2 - 1) / (coefficient1 * coefficient2 - coefficient1 - coefficient2);
+        var betOnTeam2 = (desiredWin * coefficient1 - 1) / (coefficient1 * coefficient2 - coefficient1 - coefficient2);
+
+        betOnTeam1 = Math.ceil(betOnTeam1 * 100) / 100;
+        betOnTeam2 = Math.ceil(betOnTeam2 * 100) / 100;
+
+        var site1Arr = site1.innerText.split(" ");
+        var site2Arr = site2.innerText.split(" ");
+
+        var site1Str = betOnTeam1;
+        for (var i = 1; i < site1Arr.length; i++) {
+            site1Str += " " + site1Arr[i];
+        }
+        var site2Str = betOnTeam2;
+        for (var i = 1; i < site2Arr.length; i++) {
+            site2Str += " " + site2Arr[i];
+        }
+
+        site1.innerText = site1Str;
+        site2.innerText = site2Str;
+    }
+
+    window.onload = function() {
+        fieldChanged();
+    };
+</script>
+</body>
+</html>

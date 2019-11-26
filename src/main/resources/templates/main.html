@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="stylesheet" href="./main.css">
+    <link rel="stylesheet" href="./w3-presets.css">
+    <meta charset="UTF-8">
+    <title>Is It A Fork?</title>
+</head>
+<body>
+    <header class = "w3-xxlarge header w3-black w3-card-2 w3-margin-bottom">
+        <a href="/" class="w3-button">Home</a>
+        <a href="/faq" class="w3-button">FAQ</a>
+    </header>
+    <div class="centeredContent">
+        <form action="#" th:action="@{/tryFindFork}" th:object="${userInput}" onsubmit="return checkSites()" method="post" class="content">
+            <div class="w3-card-4 w3-center w3-padding-16">
+                <ul id="sitesList" class="w3-ul">
+                    <li class="w3-hide-small">
+                        <div class="w3-row-padding">
+                            <div class="w3-third w3-right">
+                                <input th:field="*{secondTeamName}" class="w3-input w3-large" type="text" value="Team name #1">
+                            </div>
+                            <div class="w3-third w3-right">
+                                <input th:field="*{firstTeamName}" class="w3-input w3-large" type="text" value="Team name #2">
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="w3-row-padding">
+                            <div class="w3-third">
+                                <input th:field="*{firstSiteName}" class="w3-input w3-large" type="text">
+                            </div>
+                            <div class="w3-third">
+                                <input th:field="*{firstSiteOdd1}" class="w3-input w3-border" type="number" step="0.01" min="1.01" max="300" placeholder="2.33">
+                            </div>
+                            <div class="w3-third">
+                                <input th:field="*{firstSiteOdd2}" class="w3-input w3-border" type="number" step="0.01" min="1.01" max="300" placeholder="1.5">
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="w3-row-padding">
+                            <div class="w3-third">
+                                <input th:field="*{secondSiteName}" class="w3-input w3-large" type="text">
+                            </div>
+                            <div class="w3-third">
+                                <input th:field="*{secondSiteOdd1}" class="w3-input w3-border" type="number" step="0.01" min="1.01" max="300" placeholder="2.33">
+                            </div>
+                            <div class="w3-third">
+                                <input th:field="*{secondSiteOdd2}" class="w3-input w3-border" type="number" step="0.01" min="1.01" max="300" placeholder="1.5">
+                            </div>
+                        </div>
+                    </li>
+
+                    <li id="addSiteButton">
+                        <div class="w3-row-padding">
+                            <button type="button" id="addButton"  class="w3-button w3-large w3-black w3-card-2" onclick="appendNewSite()">+</button>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="w3-container w3-margin-top w3-right-align">
+                <button id="checkButton" class="w3-button w3-large w3-black w3-card-2">Find forks</button>
+            </div>
+        </form>
+    </div>
+    <footer class="footer w3-container w3-border-black w3-center w3-margin-top">
+        <p class="w3-text">Created by Sviridov Yaroslav @Spolutrean</p>
+    </footer>
+
+<script>
+    function appendNewSite() {
+        var list = document.getElementById("sitesList");
+        var countSites = list.getElementsByTagName("li").length - 1;
+        if(countSites >= 6) {
+            alert("Maximum sites is 5");
+            return;
+        }
+        var button = document.getElementById("addSiteButton");
+        var li = document.createElement("li");
+        var rowDiv = document.createElement("div");
+        rowDiv.setAttribute("class", "w3-row-padding");
+
+        var div1 = document.createElement("div");
+        div1.setAttribute("class", "w3-third");
+        var siteNameInput = document.createElement("input");
+        //<input class="w3-input" type="text" value="Site name #2">
+        siteNameInput.setAttribute("class", "w3-input w3-large");
+        siteNameInput.setAttribute("type", "text");
+        siteNameInput.setAttribute("value", "Site #" + countSites);
+        div1.appendChild(siteNameInput);
+
+
+        var div2 = document.createElement("div");
+        div2.setAttribute("class", "w3-third");
+        var firstCoeff = document.createElement("input");
+        //<input class="w3-input w3-border" type="number" step="0.01" min="1.01" max="300" placeholder="2,33">
+        firstCoeff.setAttribute("class", "w3-input w3-border");
+        firstCoeff.setAttribute("type", "number");
+        firstCoeff.setAttribute("step", "0.01");
+        firstCoeff.setAttribute("min", "1.01");
+        firstCoeff.setAttribute("max", "300");
+        firstCoeff.setAttribute("placeholder", "2.33");
+        div2.appendChild(firstCoeff);
+
+
+        var div3 = document.createElement("div");
+        div3.setAttribute("class", "w3-third");
+        var secondCoeff = document.createElement("input");
+        //<input class="w3-input w3-border" type="number" step="0.01" min="1.01" max="300" placeholder="2,33">
+        secondCoeff.setAttribute("class", "w3-input w3-border");
+        secondCoeff.setAttribute("type", "number");
+        secondCoeff.setAttribute("step", "0.01");
+        secondCoeff.setAttribute("min", "1.01");
+        secondCoeff.setAttribute("max", "300");
+        secondCoeff.setAttribute("placeholder", "1.5");
+        div3.appendChild(secondCoeff);
+
+        rowDiv.appendChild(div1);
+        rowDiv.appendChild(div2);
+        rowDiv.appendChild(div3);
+        li.appendChild(rowDiv);
+
+        list.insertBefore(li, button);
+    }
+    function checkSites() {
+        var ok = true;
+        var fields = document.getElementsByTagName("input");
+         for(var i = 0; i < fields.length; i++) {
+             var input = fields[i];
+             if(input.getAttribute("type") === "number") {
+                 var number = parseFloat(input.value);
+                 if(isNaN(number) || number <= 1) {
+                     ok = false;
+                     input.select();
+                 }
+             }
+        }
+        return ok;
+    }
+</script>
+
+</body>
+</html>
